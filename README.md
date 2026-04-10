@@ -22,13 +22,16 @@ Jeremy - Regression analysis code,
 The app can be run at the above link
 
 To use the code for the app, please do the following:
-1. Clone the GitHub repository. 
+1. Clone the GitHub repository using the URL
 2. Download the code to your local computer
 3. Download the dataset at the link below
 4. Download R and R Studio, if not yet on the local computer
 5. Launch R Studio and open the app.R file
 6. Install the required dependencies using install.packages()
 7. Launch the code using the "Run" button in the file window
+
+## Version Control Workflow
+GitHub for this code is hosted on Pierce Lovinger's personal account. Pull Requests were enforced, meaning that any change required a separate branch be created and later merged to main. These branches were created and merged as needed. Pull requests were reviewed by both Pierce and Jeremy. In the event of a conflict in merging, the code was scanned and edited in GitHub to ensure proper merging.
 
 ## Citation for Data
 Rabie El Kharoua. (2024). 🧠 Alzheimer's Disease Dataset 🧠 [Data set]. Kaggle. https://doi.org/10.34740/KAGGLE/DSV/8668279
