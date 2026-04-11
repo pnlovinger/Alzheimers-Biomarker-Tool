@@ -13,7 +13,7 @@ ui <- fluidPage(
       textOutput("Citation")
       ),
     card(
-      
+      plotOutput("results")
     )
     )
   )
@@ -23,6 +23,11 @@ server <- function(input, output) {
   output$Citation <-  renderText("Citation:
                                  Rabie El Kharoua. (2024). 🧠 Alzheimer's Disease Dataset 🧠 [Data set]. 
                                  Kaggle. https://doi.org/10.34740/KAGGLE/DSV/8668279")
+  simPlot <- eventReactive(
+    input$start,
+    ggplot(data, aes(x = Age, y = BMI)) + geom_point()
+    )
+  output$results <- renderPlot(simPlot())
 }
 
 # Run the application 
