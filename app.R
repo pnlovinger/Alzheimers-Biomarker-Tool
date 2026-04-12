@@ -65,7 +65,7 @@ server <- function(input, output) {
       inputx <- input$exposure
       inputy <- input$outcome
       ggplot(data, aes(x = .data[[inputx]], y = .data[[inputy]])) + 
-        stat_summary(fun.y = "mean", geom = "bar", colour = 'black', fill = "white") +
+        stat_summary(fun = "mean", geom = "bar", colour = 'black', fill = "white") +
         stat_summary(fun.data = mean_cl_normal, geom = "errorbar", colour = "black", width = 0.2)
     }
    )
