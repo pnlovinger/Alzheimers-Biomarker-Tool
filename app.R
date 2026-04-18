@@ -3,40 +3,48 @@ library(bslib)
 library(ggplot2)
 library(dplyr)
 library(Hmisc)
+library(NeuroDataSets)
 
 # Load Data
-data <- read.csv("alzheimers_disease_data.csv")
+data <- AD_biomarkers_tbl_df
 
 # Rename Variables for better viewing
 Mapper <- c(
-  "Physical Activity in hours" = "PhysicalActivity",
-  "Diet Quality" = "DietQuality",
-  "Sleep Quality" = "SleepQuality",
-  "Family History of Alzheimer's" = "FamilyHistoryAlzheimers",
-  "Systolic Blood Pressure" = "SystolicBP",
-  "Diastolic Blood Pressure" = "DiastolicBP",
-  "Mini Mental State Evaluation" = "MMSE",
-  "Total Cholesterol" = "CholesterolTotal",
-  "Memory Complaints" = "MemoryComplaints",
-  "Behavioral Problems" = "BehavioralProblems",
-  "Personality Changes" = "PersonalityChanges",
-  "Alzheimer's Diagnosis" = "Diagnosis"
+  "Total Tau (pg/mL)" = "tau",
+  "Thyroid Stimulating Hormone (uIU/mL)" = "Thyroid_Stimulating_Hormone",
+  "Transforming Growth Factor alpha (pg/mL)" = "TGF-alpha",
+  "Cortisol (ng/mL)" = "Cortisol",
+  "Myoglobin (ng/mL)" = "Myoglobin",
+  "Vascular Endothelial Growth Factor (pg/mL)" = "VEGF",
+  "Complement C3 (mg/mL)" = "Complement_3",
+  "Follicle-Stimulating Hormone (ng/mL)" = "FSH_Follicle_Stimulation_Hormon",
+  "Thrombopoetin (ng/mL)" = "Thrombopoetin",
+  "IL-6 Receptor (ng/mL)" = "IL_6_Receptor",
+  "Leptin (ng/mL)" = "Leptin",
+  "Insulin (uIU/mL)" = "Insulin",
+  "Cognitive Status" = "Class",
+  "Gender" = "male"
   )
 data <- data %>% rename(all_of(Mapper))
 
 # Define button mapping
-Outcomes = c("Age","BMI","Physical Activity in hours", "Diet Quality", 
-                "Sleep Quality", "Systolic Blood Pressure", 
-                "Diastolic Blood Pressure","Total Cholesterol"
+Outcomes = c("Total Tau (pg/mL)",
+             "Thyroid Stimulating Hormone (uIU/mL)",
+             "Transforming Growth Factor alpha (pg/mL)",
+             "Cortisol (ng/mL)",
+             "Myoglobin (ng/mL)",
+             "Vascular Endothelial Growth Factor (pg/mL)",
+             "Complement C3 (mg/mL)",
+             "Follicle-Stimulating Hormone (ng/mL)",
+             "Thrombopoetin (ng/mL)",
+             "IL-6 Receptor (ng/mL)",
+             "Leptin (ng/mL)",
+             "Insulin (uIU/mL)"
                 )
-Exposures = c("Family History of Alzheimer's", "Memory Complaints", 
-                 "Behavioral Problems", "Confusion", "Disorientation",
-                 "Personality Changes", "Alzheimer's Diagnosis"
-                 )
 
-#Factor Exposure Variables appropiately
-data <- data %>% mutate(across(Exposures, 
-                        ~factor(., levels = c(0,1), labels = c("No", "Yes"))))
+# Factor Gender Variable for mapping\
+
+data$Gender <-  factor(data$Gender, levels = c(0,1), labels = c("Female", "Male"))
                         
 
 # Define UI for application
