@@ -42,17 +42,27 @@ Outcomes = c("Total Tau (pg/mL)",
              "Insulin (uIU/mL)"
                 )
 
-# Factor Gender Variable for mapping\
-
+# Factor Gender Variable for mapping
 data$Gender <-  factor(data$Gender, levels = c(0,1), labels = c("Female", "Male"))
                         
+# Redefine Genotype variable into risk level and factor
+for (i in 1:nrow(data)) {
+  if ("4" %in% data$Genotype[i]) {
+    data$Genotype[i] <- "Increased Risk"
+  }
+  else if ("2" %in% data$Genotype[i]) {
+    data$Genotype[i] <- "Decreased Risk"
+  }
+  else {
+    data$Genotype[i] <- "Baseline Risk"
+  }
+}
 
 # Define UI for application
 ui <- fluidPage(
   layout_columns(
     card(
-      radioButtons("exposure", "Exposure Variable:", choices = Exposures),
-      radioButtons("outcome", "Outcome Variable", choices = Outcomes),
+      radioButtons("exposure", "Select Biomarker:", choices = Exposures),
       input_task_button("start", "Start Fit"),
       textOutput("Citation")
       ),
@@ -65,8 +75,7 @@ ui <- fluidPage(
 # Define server logic required
 server <- function(input, output) {
   output$Citation <-  renderText("Citation:
-                                 Rabie El Kharoua. (2024). 🧠 Alzheimer's Disease Dataset 🧠 [Data set]. 
-                                 Kaggle. https://doi.org/10.34740/KAGGLE/DSV/8668279")
+                                 Craig-Schapiro R, et al. Multiplexed immunoassay panel identifies novel CSF biomarkers for Alzheimer's disease diagnosis and prognosis. PLoS One. 2011 Apr 19;6(4):e18850. doi: 10.1371/journal.pone.0018850. PMID: 21526197; PMCID: PMC3079734.")
   simPlot <- eventReactive(
     input$start,
     {
