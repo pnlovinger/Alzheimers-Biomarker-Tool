@@ -11,17 +11,17 @@ data <- AD_biomarkers_tbl_df
 # Rename Variables for better viewing
 Mapper <- c(
   "Total Tau (pg/mL)" = "tau",
-  "Thyroid Stimulating Hormone (uIU/mL)" = "Thyroid_Stimulating_Hormone",
+  "Thyroid Stimulating Hormone (log uIU/mL)" = "Thyroid_Stimulating_Hormone",
   "Transforming Growth Factor alpha (pg/mL)" = "TGF_alpha",
   "Cortisol (ng/mL)" = "Cortisol",
-  "Myoglobin (ng/mL)" = "Myoglobin",
+  "Myoglobin (log ng/mL)" = "Myoglobin",
   "Vascular Endothelial Growth Factor (pg/mL)" = "VEGF",
-  "Complement C3 (mg/mL)" = "Complement_3",
+  "Complement C3 (log mg/mL)" = "Complement_3",
   "Follicle-Stimulating Hormone (ng/mL)" = "FSH_Follicle_Stimulation_Hormon",
   "Thrombopoietin (ng/mL)" = "Thrombopoietin",
   "IL-6 Receptor (ng/mL)" = "IL_6_Receptor",
   "Leptin (ng/mL)" = "Leptin",
-  "Insulin (uIU/mL)" = "Insulin",
+  "Insulin (log uIU/mL)" = "Insulin",
   "Cognitive Status" = "Class",
   "Gender" = "male"
   )
@@ -29,17 +29,17 @@ data <- data %>% rename(all_of(Mapper))
 
 # Define button mapping
 Exposures = c("Total Tau (pg/mL)",
-             "Thyroid Stimulating Hormone (uIU/mL)",
+             "Thyroid Stimulating Hormone (log uIU/mL)",
              "Transforming Growth Factor alpha (pg/mL)",
              "Cortisol (ng/mL)",
-             "Myoglobin (ng/mL)",
+             "Myoglobin (log ng/mL)",
              "Vascular Endothelial Growth Factor (pg/mL)",
-             "Complement C3 (mg/mL)",
+             "Complement C3 (log mg/mL)",
              "Follicle-Stimulating Hormone (ng/mL)",
-             "Thrombopoetin (ng/mL)",
+             "Thrombopoietin (ng/mL)",
              "IL-6 Receptor (ng/mL)",
              "Leptin (ng/mL)",
-             "Insulin (uIU/mL)"
+             "Insulin (log uIU/mL)"
                 )
 
 # Factor Gender Variable for mapping
@@ -82,9 +82,8 @@ server <- function(input, output) {
   simPlot <- eventReactive(
     input$start,
     {
-      inputx <- input$exposure
-      inputy <- input$outcome
-      ggplot(data, aes(x = .data[[inputx]], y = .data[[inputy]])) + 
+      inputy <- input$exposure
+      ggplot(data, aes(x = `Cognitive Status`, y = .data[[inputy]])) + 
         stat_summary(fun = "mean", geom = "bar", colour = 'black', fill = "white") +
         stat_summary(fun.data = mean_cl_normal, geom = "errorbar", colour = "black", width = 0.2)
     }
