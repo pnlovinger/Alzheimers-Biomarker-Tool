@@ -63,16 +63,16 @@ data$Genotype <- factor(data$Genotype, levels = c(0,1,2), labels = c("Decreased 
 
 # Define UI for application
 ui <- fluidPage(
-  layout_columns(
-    card(
+  fluidRow(
+    column(4,
       radioButtons("exposure", "Select Biomarker:", choices = Exposures),
       checkboxInput("gender", "Factor by Gender?"),
       checkboxInput("genotype", "Factor by Genotypic Risk?"),
       input_task_button("start", "Start Fit"),
       textOutput("Citation")
       ),
-    card(
-      plotOutput("results")
+    column(8,
+      plotOutput("results", height = "600")
     )
     )
   )
