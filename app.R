@@ -3,53 +3,76 @@ library(bslib)
 library(ggplot2)
 library(dplyr)
 library(Hmisc)
+library(NeuroDataSets)
 
 # Load Data
-data <- read.csv("alzheimers_disease_data.csv")
+data <- AD_biomarkers_tbl_df
 
 # Rename Variables for better viewing
 Mapper <- c(
-  "Physical Activity in hours" = "PhysicalActivity",
-  "Diet Quality" = "DietQuality",
-  "Sleep Quality" = "SleepQuality",
-  "Family History of Alzheimer's" = "FamilyHistoryAlzheimers",
-  "Systolic Blood Pressure" = "SystolicBP",
-  "Diastolic Blood Pressure" = "DiastolicBP",
-  "Mini Mental State Evaluation" = "MMSE",
-  "Total Cholesterol" = "CholesterolTotal",
-  "Memory Complaints" = "MemoryComplaints",
-  "Behavioral Problems" = "BehavioralProblems",
-  "Personality Changes" = "PersonalityChanges",
-  "Alzheimer's Diagnosis" = "Diagnosis"
+  "Total Tau (pg/mL)" = "tau",
+  "Thyroid Stimulating Hormone (log uIU/mL)" = "Thyroid_Stimulating_Hormone",
+  "Transforming Growth Factor alpha (pg/mL)" = "TGF_alpha",
+  "Cortisol (ng/mL)" = "Cortisol",
+  "Myoglobin (log ng/mL)" = "Myoglobin",
+  "Vascular Endothelial Growth Factor (pg/mL)" = "VEGF",
+  "Complement C3 (log mg/mL)" = "Complement_3",
+  "Follicle-Stimulating Hormone (ng/mL)" = "FSH_Follicle_Stimulation_Hormon",
+  "Thrombopoietin (ng/mL)" = "Thrombopoietin",
+  "IL-6 Receptor (ng/mL)" = "IL_6_Receptor",
+  "Leptin (ng/mL)" = "Leptin",
+  "Insulin (log uIU/mL)" = "Insulin",
+  "Cognitive Status" = "Class",
+  "Gender" = "male"
   )
 data <- data %>% rename(all_of(Mapper))
 
 # Define button mapping
-Outcomes = c("Age","BMI","Physical Activity in hours", "Diet Quality", 
-                "Sleep Quality", "Systolic Blood Pressure", 
-                "Diastolic Blood Pressure","Total Cholesterol"
+Exposures = c("Total Tau (pg/mL)",
+             "Thyroid Stimulating Hormone (log uIU/mL)",
+             "Transforming Growth Factor alpha (pg/mL)",
+             "Cortisol (ng/mL)",
+             "Myoglobin (log ng/mL)",
+             "Vascular Endothelial Growth Factor (pg/mL)",
+             "Complement C3 (log mg/mL)",
+             "Follicle-Stimulating Hormone (ng/mL)",
+             "Thrombopoietin (ng/mL)",
+             "IL-6 Receptor (ng/mL)",
+             "Leptin (ng/mL)",
+             "Insulin (log uIU/mL)"
                 )
-Exposures = c("Family History of Alzheimer's", "Memory Complaints", 
-                 "Behavioral Problems", "Confusion", "Disorientation",
-                 "Personality Changes", "Alzheimer's Diagnosis"
-                 )
 
-#Factor Exposure Variables appropiately
-data <- data %>% mutate(across(Exposures, 
-                        ~factor(., levels = c(0,1), labels = c("No", "Yes"))))
-                        
+# Factor Gender Variable for mapping
+data$Gender <-  factor(data$Gender, levels = c(0,1), labels = c("Female", "Male"))
+            
+            
+# Redefine Genotype variable into risk level and factor
+data$Genotype <-  as.character(data$Genotype)
+for (i in 1:nrow(data)) {
+  if (grepl("4", data$Genotype[i])) {
+    data$Genotype[i] <- 2
+  }
+  else if (grepl("2", data$Genotype[i])) {
+    data$Genotype[i] <- 0
+  }
+  else {
+    data$Genotype[i] <- 1
+  }
+}
+data$Genotype <- factor(data$Genotype, levels = c(0,1,2), labels = c("Decreased Risk", "Baseline Risk", "Increased Risk"))
 
 # Define UI for application
 ui <- fluidPage(
-  layout_columns(
-    card(
-      radioButtons("exposure", "Exposure Variable:", choices = Exposures),
-      radioButtons("outcome", "Outcome Variable", choices = Outcomes),
+  fluidRow(
+    column(4,
+      radioButtons("exposure", "Select Biomarker:", choices = Exposures),
+      checkboxInput("gender", "Factor by Gender?"),
+      checkboxInput("genotype", "Factor by Genotypic Risk?"),
       input_task_button("start", "Start Fit"),
       textOutput("Citation")
       ),
-    card(
-      plotOutput("results")
+    column(8,
+      plotOutput("results", height = "600")
     )
     )
   )
@@ -57,16 +80,38 @@ ui <- fluidPage(
 # Define server logic required
 server <- function(input, output) {
   output$Citation <-  renderText("Citation:
-                                 Rabie El Kharoua. (2024). 🧠 Alzheimer's Disease Dataset 🧠 [Data set]. 
-                                 Kaggle. https://doi.org/10.34740/KAGGLE/DSV/8668279")
+                                 Craig-Schapiro R, et al. Multiplexed immunoassay panel identifies novel CSF biomarkers for Alzheimer's disease diagnosis and prognosis. PLoS One. 2011 Apr 19;6(4):e18850. doi: 10.1371/journal.pone.0018850. PMID: 21526197; PMCID: PMC3079734.")
   simPlot <- eventReactive(
     input$start,
     {
-      inputx <- input$exposure
-      inputy <- input$outcome
-      ggplot(data, aes(x = .data[[inputx]], y = .data[[inputy]])) + 
-        stat_summary(fun = "mean", geom = "bar", colour = 'black', fill = "white") +
-        stat_summary(fun.data = mean_cl_normal, geom = "errorbar", colour = "black", width = 0.2)
+      inputy <- input$exposure
+      if (input$gender == TRUE) {
+        if(input$genotype == TRUE) {
+          data %>% ggplot(aes(x = `Cognitive Status`, y = .data[[inputy]])) + 
+            facet_grid(Gender ~ Genotype) +
+            stat_summary(fun = "mean", geom = "bar", colour = 'black', fill = "white") +
+            stat_summary(fun.data = mean_cl_normal, geom = "errorbar", colour = "black", width = 0.2)
+        }
+        else {
+          data %>% ggplot(aes(x = `Cognitive Status`, y = .data[[inputy]])) + 
+            facet_grid(Gender ~ .) +
+            stat_summary(fun = "mean", geom = "bar", colour = 'black', fill = "white") +
+            stat_summary(fun.data = mean_cl_normal, geom = "errorbar", colour = "black", width = 0.2)
+        }
+      }
+      else {
+        if(input$genotype == TRUE) {
+          data %>% ggplot(aes(x = `Cognitive Status`, y = .data[[inputy]])) + 
+            facet_grid(. ~ Genotype) +
+            stat_summary(fun = "mean", geom = "bar", colour = 'black', fill = "white") +
+            stat_summary(fun.data = mean_cl_normal, geom = "errorbar", colour = "black", width = 0.2)
+        }
+        else {
+          data %>% ggplot(aes(x = `Cognitive Status`, y = .data[[inputy]])) + 
+            stat_summary(fun = "mean", geom = "bar", colour = 'black', fill = "white") +
+            stat_summary(fun.data = mean_cl_normal, geom = "errorbar", colour = "black", width = 0.2)
+        }
+      }
     }
    )
   output$results <- renderPlot(simPlot())
