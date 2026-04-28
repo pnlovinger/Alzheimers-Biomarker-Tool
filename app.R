@@ -106,23 +106,23 @@ server <- function(input, output) {
     {
       inputy <- input$exposure
       if (input$gender && input$genotype) {
-        p <- data %>% ggplot(aes(x = `Cognitive Status`, y = .data[[inputy]])) + 
+        p <- data %>% ggplot(aes(x = `Cognitive Status`, y = .data[[inputy]], fill = `Cognitive Status`)) + 
           facet_grid(Gender ~ Genotype) +
-          stat_summary(fun = "mean", geom = "bar", colour = 'black', fill = "white") +
+          stat_summary(fun = "mean", geom = "bar", colour = 'black') +
           stat_summary(fun.data = mean_cl_normal, geom = "errorbar", colour = "black", width = 0.2)
       } else if (input$gender) {
-        p <- data %>% ggplot(aes(x = `Cognitive Status`, y = .data[[inputy]])) + 
+        p <- data %>% ggplot(aes(x = `Cognitive Status`, y = .data[[inputy]], fill = `Cognitive Status`)) + 
           facet_grid(Gender ~ .) +
-          stat_summary(fun = "mean", geom = "bar", colour = 'black', fill = "white") +
+          stat_summary(fun = "mean", geom = "bar", colour = 'black') +
           stat_summary(fun.data = mean_cl_normal, geom = "errorbar", colour = "black", width = 0.2)
       } else if(input$genotype) { 
-        p<- data %>% ggplot(aes(x = `Cognitive Status`, y = .data[[inputy]])) + 
+        p<- data %>% ggplot(aes(x = `Cognitive Status`, y = .data[[inputy]], fill = `Cognitive Status`)) + 
           facet_grid(. ~ Genotype) +
-          stat_summary(fun = "mean", geom = "bar", colour = 'black', fill = "white") +
+          stat_summary(fun = "mean", geom = "bar", colour = 'black') +
           stat_summary(fun.data = mean_cl_normal, geom = "errorbar", colour = "black", width = 0.2)
       } else {
-        p <- data %>% ggplot(aes(x = `Cognitive Status`, y = .data[[inputy]])) + 
-          stat_summary(fun = "mean", geom = "bar", colour = 'black', fill = "white") +
+        p <- data %>% ggplot(aes(x = `Cognitive Status`, y = .data[[inputy]], fill = `Cognitive Status`)) + 
+          stat_summary(fun = "mean", geom = "bar", colour = 'black') +
           stat_summary(fun.data = mean_cl_normal, geom = "errorbar", colour = "black", width = 0.2)
       }
       
@@ -370,6 +370,8 @@ server <- function(input, output) {
     req(simPlot())
     simPlot()$plot
   })
+  
+  
   
   output$statsPanel <-renderDT({
     req(simPlot())
