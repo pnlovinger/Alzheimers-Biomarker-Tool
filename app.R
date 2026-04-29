@@ -412,8 +412,9 @@ server <- function(input, output) {
         order = list(list(8, "asc")),
         columnDefs = list(
           list(className = "dt-center",
-               targets = c(4,5,6,7,8,9,10))
-        )
+               targets = c(4,5,6,7,8,9,10)),
+          list(visible = FALSE, targets = which(names(df) == "p_adj_num") - 1)
+          )
       )
     ) %>% 
       formatStyle(
