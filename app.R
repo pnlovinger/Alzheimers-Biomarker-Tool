@@ -395,6 +395,8 @@ server <- function(input, output) {
     
     df <- res$stats
     
+    df$p_adj_num <- df$p.adj
+    
     df$p <-ifelse(df$p < 0.001, "<0.001", formatC(df$p, digits =4, format = "f"))
     df$p.adj <- ifelse(df$p.adj <0.001, "<0.001", formatC(df$p.adj, digits =4, format ="f"))
     
@@ -424,6 +426,7 @@ server <- function(input, output) {
       ) %>% 
       formatStyle(
         "p.adj",
+        valueColumns = "p_adj_num",
         backgroundColor = styleInterval(
           c(0.001, 0.01, 0.05),
           c("#fee232", "#fef3c7","#fefce8", "white" )
