@@ -109,21 +109,25 @@ server <- function(input, output) {
         p <- data %>% ggplot(aes(x = `Cognitive Status`, y = .data[[inputy]], fill = `Cognitive Status`)) + 
           facet_grid(Gender ~ Genotype) +
           stat_summary(fun = "mean", geom = "bar", colour = 'black') +
-          stat_summary(fun.data = mean_cl_normal, geom = "errorbar", colour = "black", width = 0.2)
+          stat_summary(fun.data = mean_cl_normal, geom = "errorbar", colour = "black", width = 0.2) + 
+          theme(legend.position = "none", text = element_text(size = 15))
       } else if (input$gender) {
         p <- data %>% ggplot(aes(x = `Cognitive Status`, y = .data[[inputy]], fill = `Cognitive Status`)) + 
           facet_grid(Gender ~ .) +
           stat_summary(fun = "mean", geom = "bar", colour = 'black') +
-          stat_summary(fun.data = mean_cl_normal, geom = "errorbar", colour = "black", width = 0.2)
+          stat_summary(fun.data = mean_cl_normal, geom = "errorbar", colour = "black", width = 0.2) + 
+          theme(legend.position = "none", text = element_text(size = 15))
       } else if(input$genotype) { 
         p<- data %>% ggplot(aes(x = `Cognitive Status`, y = .data[[inputy]], fill = `Cognitive Status`)) + 
           facet_grid(. ~ Genotype) +
           stat_summary(fun = "mean", geom = "bar", colour = 'black') +
-          stat_summary(fun.data = mean_cl_normal, geom = "errorbar", colour = "black", width = 0.2)
+          stat_summary(fun.data = mean_cl_normal, geom = "errorbar", colour = "black", width = 0.2) + 
+          theme(legend.position = "none", text = element_text(size = 15))
       } else {
         p <- data %>% ggplot(aes(x = `Cognitive Status`, y = .data[[inputy]], fill = `Cognitive Status`)) + 
           stat_summary(fun = "mean", geom = "bar", colour = 'black') +
-          stat_summary(fun.data = mean_cl_normal, geom = "errorbar", colour = "black", width = 0.2)
+          stat_summary(fun.data = mean_cl_normal, geom = "errorbar", colour = "black", width = 0.2) + 
+          theme(legend.position = "none", text = element_text(size = 15))
       }
       
       factors <- character(0)
