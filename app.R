@@ -371,7 +371,18 @@ server <- function(input, output) {
     simPlot()$plot
   })
   
-  
+  captionRender <- eventReactive(
+    input$start, {
+      res <-simPlot()
+      htmltools::tags$caption(
+        style = "caption-side:top; font-weight:bold; font-size:14px; color: #1e3a5f;",
+        paste("Statistical Results -", input$exposure, "|",
+              res$n_tests, "test(s) |",
+              res$n_ttest, "Welch t-test |",
+              res$n_wilcox, "Wilcoxon |BH-adjusted p-values") 
+        )
+    }
+  )
   
   output$statsPanel <-renderDT({
     req(simPlot())
@@ -387,13 +398,7 @@ server <- function(input, output) {
       df,
       rownames = FALSE,
       escape = FALSE,
-      caption = htmltools::tags$caption(
-        style = "caption-side:top; font-weight:bold; font-size:14px; color: #1e3a5f;",
-        paste("Statistical Results -", input$exposure, "|",
-              res$n_tests, "test(s) |",
-              res$n_ttest, "Welch t-test |",
-              res$n_wilcox, "Wilcoxon |BH-adjusted p-values")
-      ),
+      caption = captionRender(),
       options=list(
         pageLength =10,
         scrollX = TRUE,
